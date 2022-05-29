@@ -4,48 +4,36 @@ using UnityEngine;
 
 public class MoveSquare : MonoBehaviour
 {
-    private float distance;
+
     private bool dragging = false;
-    private Vector3 offset;
-    private Transform toDrag;
+    float changeInX, changeInY;
+    Rigidbody2D rigidBody;
 
     // Start is called before the first frame update
-
+    void Start()
+    {
+        rigidBody = GetComponent<Rigidbody2D>();
+    }
     // Update is called once per frame
     void Update()
     {
-        Vector3 v3;
-        if (Input.touchCount != 1) {
-            dragging = false;
-            return;
-        }
-
-        Touch touch = Input.touches[0];
-        Vector3 pos = touch.position;
-
-        if(touch.phase == TouchPhase.Began) {
-            Ray ray = Camera.main.ScreenPointToRay(pos);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit)){
-                if (hit.collider.tag == "square"){
-                    toDrag = hit.transform;
-                    distance = hit.transform.position.z - Camera.main.transform.position.z;
-                    v3 = new Vector3(pos.x, pos.y, distance);
-                    v3 = Camera.main.ScreenToWorldPoint(v3);
-                    offset = toDrag.position - v3;
+        if (Input.touchCount > 0){
+            Touch touch = Input.GetTouch(0);
+            Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+            switch(touch.phase){
+                case TouchPhase.Began:
                     dragging = true;
-                }
-            }
+                    changeInX = touchPosition.x - transform.position.x;
+                    changeInY = touchPosition.y - transform.position.y;
+                    break;
 
-            if (dragging && touch.phase == TouchPhase.Moved) {
-                v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
-                v3 = Camera.main.ScreenToWorldPoint(v3);
-                toDrag.position = v3 + offset;
-            }
+                case TouchPhase.Moved:
+                    rigidBody.MovePosition(new Vector2(touchPosition.x - changeInX, touchPosition.y - changeInY));
+                    break;
 
-            if (dragging && (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)) {
-                dragging = false;
+                case TouchPhase.Ended:
+                    dragging = false;
+                    break;
             }
         }
     }

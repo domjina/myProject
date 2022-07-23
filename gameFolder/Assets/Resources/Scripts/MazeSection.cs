@@ -242,8 +242,21 @@ public class MazeSection {
                 GameObject positronSpawner = (GameObject)Object.Instantiate(
                         Resources.Load("Objects/PositronSpawner", typeof(GameObject)));
                 positronSpawner.transform.position = coordinate;
+
+                // To avoid positrons to have a null vector direction,
+                // I check if one of the values is zero.
+                int dirX = Random.Range(-1, 2);
+                int dirY = Random.Range(-1, 2);
+                if (dirX == 0) {
+                    if (Random.value < 0.5) {
+                        dirY = -1;
+                    } else {
+                        dirY = 1;
+                    }
+                }
+
                 positronSpawner.GetComponent<PositronSpawner>().SetDirection(
-                    new Vector3(Random.Range(-1,2), Random.Range(-1,2), 0));
+                    new Vector3(dirX, dirY));
                 tiles.Add(positronSpawner);
                 break;
             case 7:

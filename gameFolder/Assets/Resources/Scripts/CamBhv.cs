@@ -28,7 +28,9 @@ public class CamBhv : MonoBehaviour
 
     void Update()
     {
-        FollowGameObject(focusObject, cam.transform.position.z, followX);
+        if (focusObject != null) {
+            FollowGameObject(focusObject, cam.transform.position.z, followX);
+        }
     }
 
     /// <summary>

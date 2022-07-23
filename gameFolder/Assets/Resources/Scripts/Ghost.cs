@@ -67,7 +67,7 @@ public class Ghost : MonoBehaviour
         }
 
         // Record the players movement.
-        playerPos[currentFrame] = player.transform.position;
+        if (player != null) playerPos[currentFrame] = player.transform.position;
         currentFrame++;
     }
 }

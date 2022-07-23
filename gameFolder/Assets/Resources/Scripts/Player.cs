@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -6,8 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Handles player control and PvE interactions.
 /// </summary>
-public class Player : MonoBehaviour
-{
+public class Player : MonoBehaviour {
 
     /// <summary>
     /// Player velocity.
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// The buttons that controll player movement.
     /// </summary>
-    public Button   uiButtonUp,
+    public Button uiButtonUp,
                     uiButtonDown,
                     uiButtonLeft,
                     uiButtonRight;
@@ -36,13 +36,15 @@ public class Player : MonoBehaviour
     /// <summary>
     /// The display to show the amount of batterys a player obtained.
     /// </summary>
-    public Text     uiBatteryDisplay;
+    public Text uiBatteryDisplay;
 
     /// <summary>
     /// <para>Makes the player invulnerable against anything.</para>
     /// <para> Even fucking walls! Walls man!!!</para>
     /// </summary>
     public bool invulnerable = false;
+
+    private float[] powerUpTimers = new float[5];
 
     void Start()
     {
@@ -56,6 +58,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         MoveForward();
+        CheckPowerUps();
     }
 
     /// <summary>
@@ -70,6 +73,16 @@ public class Player : MonoBehaviour
         // if the framerate should drop.
         playerObject.transform.position +=
             Time.deltaTime * velocity * forwardVector;
+    }
+
+    private void CheckPowerUps() {
+        for(int i = 0; i < powerUpTimers.Length; i++){
+            powerUpTimers[i] -= Time.deltaTime;
+        }
+        if (powerUpTimers[0] < 0) {
+            playerObject.transform.localScale = 0.5f * Vector3.one;
+            invulnerable = false;
+        }
     }
 
     /// <summary>
@@ -116,13 +129,14 @@ public class Player : MonoBehaviour
             Destroy(puobj);
             velocity /= 2;
         } else if (puobj.CompareTag("BeamTrigger")) {
-            puobj.GetComponent<BeamTrigger>().Activate();
+            puobj.GetComponent<BeamTrigger>().Trigger();
         } else if (puobj.CompareTag("Shield")) {
             Destroy(puobj);
-            StartCoroutine(ShieldRoutine());
+            invulnerable = true;
+            playerObject.transform.localScale = Vector3.one;
+            powerUpTimers[0] = 5;
         } else if (puobj.CompareTag("LED")) {
-            forwardVector = puobj.transform.eulerAngles;
-            RemoveInputListener();
+            
         } else if (puobj.CompareTag("GhostTrigger")) {
             puobj.GetComponent<GhostTrigger>().BeginSpawning();
         }
@@ -136,20 +150,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Handles the animations for the Shield Collectible.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator ShieldRoutine() {
+    private void OnTriggerStay2D(Collider2D powerup){
 
-        invulnerable = true;
-        playerObject.transform.localScale = Vector3.one;
+        GameObject puobj = powerup.gameObject;
 
-        yield return new WaitForSeconds(10);
-
-        playerObject.transform.localScale = 0.5f * Vector3.one;
-        invulnerable = false;
-
+        if (puobj.CompareTag("Beam")) {
+            if (puobj.GetComponent<Beam>().GetLethal()) {
+                Kill();
+            }
+        } else if (puobj.CompareTag("LED")) {
+            forwardVector = puobj.transform.eulerAngles;
+            RemoveInputListener();
+        }
+        
     }
 
     /// <summary>

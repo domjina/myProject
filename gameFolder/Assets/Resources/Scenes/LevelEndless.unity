@@ -1516,7 +1516,7 @@ PrefabInstance:
       objectReference: {fileID: 1429041763}
     - target: {fileID: 9000339764039573421, guid: cfbc2ba0a8374fb43a72eda6e6223a1d, type: 3}
       propertyPath: invulnerable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9000339764039573421, guid: cfbc2ba0a8374fb43a72eda6e6223a1d, type: 3}
       propertyPath: uiButtonDown

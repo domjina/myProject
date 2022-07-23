@@ -36,6 +36,8 @@ public class Positron : MonoBehaviour {
 
         positron = gameObject;
         startPos = positron.transform.position;
+        // Z Coordinate determines layer rendering. Set abritary to 3.
+        startPos.z = 3;
     }
 
     public void Update() {

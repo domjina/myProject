@@ -65,6 +65,7 @@
     <Compile Include="Assets\Resources\Scripts\CamBhv.cs" />
     <Compile Include="Assets\Resources\Scripts\MazeSection.cs" />
     <Compile Include="Assets\Resources\Scripts\Positron.cs" />
+    <Compile Include="Assets\Resources\Scripts\Beam.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Resources\Blueprints\MS_ResBlock.txt" />
